@@ -44,35 +44,8 @@ $theme = array(
 // Blokuje wykonywanie pliku TPL z katalogu szablonu
 define('THIS', TRUE);
 
-// Site Admin
-$row = $_pdo->getRow('SELECT * FROM [users] WHERE `id` = 1 and `role` = 1');
-
-	if(time() <= $row['lastvisit']+300)
-	{
-		$last_visit = 1;
-	}
-	else
-	{
-		$last_visit = HELP::showDate('shortdate', $row['lastvisit']);
-	}
-
-	$admin = array(
-		'id' => $row['id'],
-		'username' => $_user->getUsername($row['id']),
-		'role' => $_user->getRoleName($row['role']),
-		'roles' => implode(', ', $_user->getUserRolesTitle($row['id'], 3)),
-		'avatar' => $row['avatar'],
-		'joined' => HELP::showDate('shortdate', $row['joined']),
-		'last_visit' => $last_visit,
-		'link' => HELP::profileLink($row['username'], $row['id']),
-		'last_visit_time' => ($row['lastvisit'] != 0 ? HELP::showDate('shortdate', $row['lastvisit']) : __('Nie był na stronie')),
-		'is_online' => inArray($row['id'], $_user->getOnline(), 'id') ? 1 : 0,
-	);
-
-$_tpl->assign('site_admin', $admin);
-
 // Admins
-$query = $_pdo->getData('SELECT * FROM [users] WHERE `id` != 1 AND `role` = 1');
+$query = $_pdo->getData('SELECT * FROM [users] WHERE `role` = 1');
 
 if ($_pdo->getRowsCount($query))
 {
@@ -105,7 +78,6 @@ if ($_pdo->getRowsCount($query))
 }
 
 // Other groups
-
 $groups = $_pdo->getData('SELECT * FROM [groups] WHERE `id` != 1 AND `team` = 1');
 
 // todo: dodać cache, przerobić w bazie roles na po przecinku zamiast serialize, wtedy nie trzeba bedzie pobierać tylu rekordów
